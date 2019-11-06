@@ -15,6 +15,7 @@ class AuthorizationClient extends AbstractClient
     /**
      * @param string $sessionTransferUrl
      * @param string $redirectPage
+     * @param string $sessionId
      * @param Request $request
      * @param string $loginPageType (default)
      * @return ResponseEntity ["success": 1, "url": "http://..."]
@@ -22,17 +23,22 @@ class AuthorizationClient extends AbstractClient
     public function getLoginPage(
         string $sessionTransferUrl,
         string $redirectPage,
+        string $sessionId,
         Request $request,
         string $loginPageType = 'default'
     ): ResponseEntity {
-        $request = $this->addGetLoginPage($sessionTransferUrl, $redirectPage, $request, $loginPageType);
+        $request = $this->addGetLoginPage($sessionTransferUrl, $redirectPage, $sessionId, $request, $loginPageType);
 
-        return $this->handle()->getResponseById($request->getId());
+        $responseCollection = $this->handle();
+        $responseEntity     = $responseCollection->getResponseById($request->getId());
+
+        return $responseEntity;
     }
 
     /**
      * @param string $sessionTransferUrl
      * @param string $redirectPage
+     * @param string $sessionId
      * @param Request $request
      * @param string $loginPageType (default)
      * @return RequestEntity ["success": 1, "url": "http://..."]
@@ -40,6 +46,7 @@ class AuthorizationClient extends AbstractClient
     public function addGetLoginPage(
         string $sessionTransferUrl,
         string $redirectPage,
+        string $sessionId,
         Request $request,
         string $loginPageType = 'default'
     ): RequestEntity {
@@ -49,7 +56,7 @@ class AuthorizationClient extends AbstractClient
                 'loginPageType'    => $loginPageType,
                 'redirectPage'     => $redirectPage,
                 'sessionTransferUrl' => $sessionTransferUrl,
-                'sessionId'        => session_id(),
+                'sessionId'        => $sessionId,
                 'serverParams'     => $request->server->all(),
             ]
         );
@@ -57,28 +64,30 @@ class AuthorizationClient extends AbstractClient
 
     /**
      * @param string $token
+     * @param string $sessionId
      * @param Request $request
      * @return ResponseEntity ["success": 1, "user": ["userName": "me@me.me"], "tokenExpiresIn": 3600]
      */
-    public function isAuthorizedLoginToken(string $token, Request $request): ResponseEntity
+    public function isAuthorizedLoginToken(string $token, string $sessionId, Request $request): ResponseEntity
     {
-        $request = $this->addIsAuthorizedLoginToken($token, $request);
+        $request = $this->addIsAuthorizedLoginToken($token, $sessionId, $request);
 
         return $this->handle()->getResponseById($request->getId());
     }
 
     /**
      * @param string $token
+     * @param string $sessionId
      * @param Request $request
      * @return RequestEntity
      */
-    public function addIsAuthorizedLoginToken(string $token, Request $request): RequestEntity
+    public function addIsAuthorizedLoginToken(string $token, string $sessionId, Request $request): RequestEntity
     {
         return $this->addRequest(
             'isAuthorizedLoginToken',
             [
                 'token'        => $token,
-                'sessionId'    => session_id(),
+                'sessionId'    => $sessionId,
                 'serverParams' => $request->server->all(),
             ]
         );
