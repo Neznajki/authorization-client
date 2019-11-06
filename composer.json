@@ -23,14 +23,6 @@
         {
             "type": "git",
             "url": "git@github.com:Neznajki/json-rpc-client-base.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:Neznajki/codeception-test-engine.git"
-        },
-        {
-            "type": "git",
-            "url": "git@github.com:Neznajki/json-rpc-common.git"
         }
     ],
     "require-dev": {

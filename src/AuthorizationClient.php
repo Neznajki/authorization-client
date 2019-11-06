@@ -58,7 +58,7 @@ class AuthorizationClient extends AbstractClient
     /**
      * @param string $token
      * @param Request $request
-     * @return ResponseEntity ["success": 1, "tokenExpiresIn": 3600]
+     * @return ResponseEntity ["success": 1, "user": ["userName": "me@me.me"], "tokenExpiresIn": 3600]
      */
     public function isAuthorizedLoginToken(string $token, Request $request): ResponseEntity
     {
